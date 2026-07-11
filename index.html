@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SAYANJALI BLOCKCHAIN — Infrastructure for Intelligent Decentralization</title>
+<meta name="description" content="SAYANJALI BLOCKCHAIN is the open-source infrastructure layer powering the SAYANJALI NEXUS ecosystem of AI products, SaaS platforms, and enterprise automation." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05060b;
+    --surface:#0c0f1c;
+    --surface-2:#121730;
+    --border:rgba(255,255,255,.08);
+    --border-strong:rgba(255,255,255,.14);
+    --text:#eef1fb;
+    --muted:#8891a8;
+    --muted-2:#5b6379;
+    --blue:#4c6fff;
+    --purple:#8b5cf6;
+    --cyan:#22d3ee;
+    --grad: linear-gradient(135deg, var(--blue), var(--purple));
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk', sans-serif; letter-spacing:-0.02em;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--purple); color:#fff;}
+
+  /* ambient network canvas — signature element */
+  #network{
+    position:fixed; inset:0; width:100%; height:100%;
+    z-index:0; pointer-events:none; opacity:.5;
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px; position:relative; z-index:1;}
+  section{position:relative; z-index:1;}
+
+  /* nav */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    backdrop-filter:blur(16px);
+    background:rgba(5,6,11,.6);
+    border-bottom:1px solid var(--border);
+  }
+  nav{max-width:1180px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Space Grotesk'; font-weight:700; font-size:16px; letter-spacing:.02em;}
+  .brand .dot{width:9px; height:9px; border-radius:2px; background:var(--grad); box-shadow:0 0 14px var(--purple);}
+  .navlinks{display:flex; gap:32px; font-size:14px; color:var(--muted);}
+  .navlinks a:hover{color:var(--text);}
+  .navcta{display:flex; gap:10px;}
+  @media(max-width:860px){ .navlinks{display:none;} }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 20px; border-radius:8px; font-size:14px; font-weight:600;
+    border:1px solid var(--border-strong); cursor:pointer; white-space:nowrap;
+  }
+  .btn-primary{background:var(--grad); border:none; color:#fff; box-shadow:0 8px 24px -8px rgba(139,92,246,.6);}
+  .btn-ghost{background:rgba(255,255,255,.03); color:var(--text);}
+  .btn-ghost:hover{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.22);}
+  .btn-primary:hover{filter:brightness(1.08);}
+
+  /* hero */
+  .hero{padding:200px 0 140px; text-align:center;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono';
+    font-size:12px; color:var(--cyan); border:1px solid rgba(34,211,238,.25);
+    background:rgba(34,211,238,.06); padding:6px 14px; border-radius:100px; margin-bottom:28px;
+  }
+  .eyebrow .pulse{width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan); animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.3;}}
+  .hero h1{
+    font-size:clamp(40px, 7vw, 84px); font-weight:700; line-height:1.02; margin-bottom:24px;
+    background:linear-gradient(180deg, #fff 30%, #b9c2e0 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero .grad-word{
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero p.sub{max-width:640px; margin:0 auto 40px; color:var(--muted); font-size:18px;}
+  .hero .actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+
+  .fade-up{opacity:0; transform:translateY(24px); transition:opacity .8s ease, transform .8s ease;}
+  .fade-up.in{opacity:1; transform:translateY(0);}
+
+  /* section heading */
+  .section-head{max-width:640px; margin:0 auto 56px; text-align:center;}
+  .section-head .kicker{font-family:'JetBrains Mono'; font-size:12px; color:var(--purple); letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px; display:block;}
+  .section-head h2{font-size:clamp(28px,4vw,42px); font-weight:600; margin-bottom:16px;}
+  .section-head p{color:var(--muted); font-size:16px;}
+  .section-pad{padding:120px 0;}
+  .divider{height:1px; background:linear-gradient(90deg, transparent, var(--border), transparent);}
+
+  /* vision */
+  .pillars{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  @media(max-width:900px){.pillars{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.pillars{grid-template-columns:1fr;}}
+  .pillar{
+    padding:28px 24px; border:1px solid var(--border); border-radius:14px;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+    transition:border-color .3s, transform .3s;
+  }
+  .pillar:hover{border-color:var(--border-strong); transform:translateY(-3px);}
+  .pillar .icon{width:38px; height:38px; margin-bottom:16px; color:var(--cyan);}
+  .pillar h3{font-size:16px; font-weight:600; margin-bottom:8px;}
+  .pillar p{font-size:14px; color:var(--muted);}
+
+  /* ecosystem grid */
+  .eco-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media(max-width:900px){.eco-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.eco-grid{grid-template-columns:1fr;}}
+  .eco-card{
+    position:relative; padding:26px; border-radius:16px; border:1px solid var(--border);
+    background:rgba(255,255,255,.02); overflow:hidden; transition:border-color .3s, transform .3s;
+  }
+  .eco-card:hover{border-color:rgba(139,92,246,.4); transform:translateY(-4px);}
+  .eco-card::before{
+    content:""; position:absolute; top:-40%; right:-40%; width:180px; height:180px; border-radius:50%;
+    background:var(--grad); filter:blur(60px); opacity:.12; pointer-events:none;
+  }
+  .eco-icon{width:34px; height:34px; margin-bottom:16px; color:var(--blue);}
+  .eco-card h3{font-size:16px; font-weight:600; margin-bottom:8px;}
+  .eco-card p{font-size:13.5px; color:var(--muted); margin-bottom:16px; min-height:44px;}
+  .badge{
+    display:inline-block; font-family:'JetBrains Mono'; font-size:11px; padding:4px 10px; border-radius:100px;
+    letter-spacing:.03em;
+  }
+  .badge-mvp{background:rgba(76,111,255,.12); color:#8fa4ff; border:1px solid rgba(76,111,255,.3);}
+  .badge-open{background:rgba(34,211,238,.1); color:var(--cyan); border:1px solid rgba(34,211,238,.3);}
+  .badge-soon{background:rgba(255,255,255,.05); color:var(--muted); border:1px solid var(--border-strong);}
+
+  /* features */
+  .feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:16px; overflow:hidden;}
+  @media(max-width:900px){.feat-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.feat-grid{grid-template-columns:1fr;}}
+  .feat{background:var(--surface); padding:30px 26px;}
+  .feat .icon{width:26px; height:26px; color:var(--purple); margin-bottom:14px;}
+  .feat h3{font-size:15px; font-weight:600; margin-bottom:6px;}
+  .feat p{font-size:13.5px; color:var(--muted);}
+
+  /* token */
+  .token-panel{
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
+    border:1px solid var(--border); border-radius:20px; padding:56px;
+    background:radial-gradient(120% 120% at 0% 0%, rgba(76,111,255,.08), transparent 60%),
+               radial-gradient(120% 120% at 100% 100%, rgba(139,92,246,.08), transparent 60%);
+  }
+  @media(max-width:860px){.token-panel{grid-template-columns:1fr; padding:36px 24px;}}
+  .token-symbol{
+    width:84px; height:84px; border-radius:20px; background:var(--grad);
+    display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk'; font-weight:700; font-size:26px;
+    box-shadow:0 20px 50px -12px rgba(139,92,246,.5); margin-bottom:22px;
+  }
+  .token-panel h2{font-size:32px; margin-bottom:14px;}
+  .token-panel .lede{color:var(--muted); margin-bottom:24px;}
+  .util-list{display:grid; grid-template-columns:1fr 1fr; gap:12px 24px;}
+  .util-list li{list-style:none; font-size:14px; color:var(--text); display:flex; gap:10px; align-items:flex-start;}
+  .util-list li svg{width:16px; height:16px; color:var(--cyan); flex-shrink:0; margin-top:3px;}
+
+  /* why syj */
+  .why-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  @media(max-width:900px){.why-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.why-grid{grid-template-columns:1fr;}}
+  .why-item{padding:24px; border-radius:14px; border:1px solid var(--border); background:rgba(255,255,255,.015);}
+  .why-item .n{font-family:'JetBrains Mono'; font-size:12px; color:var(--muted-2); margin-bottom:10px;}
+  .why-item h3{font-size:15px; margin-bottom:6px;}
+  .why-item p{font-size:13.5px; color:var(--muted);}
+
+  /* roadmap */
+  .roadmap{position:relative; max-width:760px; margin:0 auto;}
+  .rm-line{position:absolute; left:19px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg, var(--blue), var(--purple), transparent);}
+  .rm-item{position:relative; padding-left:56px; padding-bottom:44px;}
+  .rm-item:last-child{padding-bottom:0;}
+  .rm-dot{
+    position:absolute; left:8px; top:2px; width:24px; height:24px; border-radius:50%;
+    background:var(--surface-2); border:2px solid var(--purple); display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono'; font-size:10px; color:var(--cyan);
+  }
+  .rm-item h3{font-size:17px; margin-bottom:6px;}
+  .rm-item .status{font-family:'JetBrains Mono'; font-size:11px; color:var(--muted-2); margin-left:8px;}
+  .rm-tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .rm-tag{font-size:12px; padding:4px 10px; border-radius:100px; background:rgba(255,255,255,.04); border:1px solid var(--border); color:var(--muted);}
+
+  /* github */
+  .gh-panel{border:1px solid var(--border); border-radius:20px; padding:44px; background:var(--surface);}
+  .gh-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:16px;}
+  .gh-repo{display:flex; align-items:center; gap:14px;}
+  .gh-repo svg{width:30px; height:30px; color:var(--text);}
+  .gh-repo .name{font-family:'JetBrains Mono'; font-size:15px;}
+  .gh-repo .sub{font-size:13px; color:var(--muted-2);}
+  .gh-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  @media(max-width:700px){.gh-stats{grid-template-columns:repeat(2,1fr);}}
+  .gh-stat{padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center; background:rgba(255,255,255,.015);}
+  .gh-stat .val{font-family:'JetBrains Mono'; font-size:26px; font-weight:600; margin-bottom:4px;}
+  .gh-stat .lbl{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
+  .gh-note{margin-top:20px; font-size:13px; color:var(--muted-2); text-align:center;}
+
+  /* founder */
+  .founder-panel{
+    display:grid; grid-template-columns:auto 1fr; gap:36px; align-items:center;
+    border:1px solid var(--border); border-radius:20px; padding:48px;
+    background:linear-gradient(135deg, rgba(76,111,255,.04), rgba(139,92,246,.04));
+  }
+  @media(max-width:700px){.founder-panel{grid-template-columns:1fr; text-align:center; justify-items:center;}}
+  .avatar{
+    width:96px; height:96px; border-radius:50%; background:var(--grad);
+    display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk'; font-weight:700; font-size:32px; color:#fff;
+    flex-shrink:0;
+  }
+  .founder-panel h3{font-size:22px; margin-bottom:4px;}
+  .founder-panel .role{color:var(--muted); font-size:14px; margin-bottom:16px;}
+  .founder-panel p.msg{color:var(--text); font-size:15px; max-width:640px;}
+
+  /* coming soon */
+  .soon-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  @media(max-width:900px){.soon-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.soon-grid{grid-template-columns:1fr;}}
+  .soon-item{
+    padding:22px; border-radius:12px; border:1px dashed var(--border-strong); text-align:center;
+    font-size:14px; color:var(--muted); position:relative;
+  }
+  .soon-item .tick{font-family:'JetBrains Mono'; font-size:10px; color:var(--purple); display:block; margin-top:6px;}
+
+  /* footer */
+  footer{border-top:1px solid var(--border); padding:56px 0 32px;}
+  .foot-grid{display:flex; justify-content:space-between; flex-wrap:wrap; gap:32px; margin-bottom:40px;}
+  .foot-brand p{color:var(--muted); font-size:14px; max-width:320px; margin-top:12px;}
+  .foot-links{display:flex; gap:64px; flex-wrap:wrap;}
+  .foot-col h4{font-size:13px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:14px;}
+  .foot-col a{display:block; font-size:14px; color:var(--muted); margin-bottom:10px;}
+  .foot-col a:hover{color:var(--text);}
+  .foot-bottom{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-size:13px; color:var(--muted-2); padding-top:24px; border-top:1px solid var(--border);}
+  .foot-bottom .socials{display:flex; gap:16px;}
+  .foot-bottom svg{width:18px; height:18px; color:var(--muted); transition:color .2s;}
+  .foot-bottom svg:hover{color:var(--text);}
+
+  @media(prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="network"></canvas>
+
+<header>
+  <nav>
+    <div class="brand"><span class="dot"></span>SAYANJALI BLOCKCHAIN</div>
+    <div class="navlinks">
+      <a href="#vision">Vision</a>
+      <a href="#ecosystem">Ecosystem</a>
+      <a href="#token">Token</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#github">GitHub</a>
+      <a href="#founder">Founder</a>
+    </div>
+    <div class="navcta">
+      <a href="https://github.com/SHalimoosavi/SAYANJALI-BLOCKCHAIN" target="_blank" class="btn btn-ghost">GitHub</a>
+      <a href="#ecosystem" class="btn btn-primary">Explore Ecosystem</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="eyebrow"><span class="pulse"></span>OPEN SOURCE · IN DEVELOPMENT</div>
+    <h1 class="fade-up in">SAYANJALI<br><span class="grad-word">BLOCKCHAIN</span></h1>
+    <p class="sub fade-up in">Infrastructure for intelligent decentralization — a utility-token network built to power AI products, SaaS platforms, and enterprise automation across the SAYANJALI NEXUS ecosystem.</p>
+    <div class="actions fade-up in">
+      <a href="#ecosystem" class="btn btn-primary">Explore Ecosystem</a>
+      <a href="#" class="btn btn-ghost" id="whitepaper-btn">Read Whitepaper</a>
+      <a href="https://github.com/SHalimoosavi/SAYANJALI-BLOCKCHAIN" target="_blank" class="btn btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.9 10.95.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.22.7-3.9-1.55-3.9-1.55-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.57-.29-5.28-1.28-5.28-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.72 5.4-5.31 5.68.42.36.79 1.08.79 2.17 0 1.57-.01 2.83-.01 3.22 0 .31.2.67.8.55A11.52 11.52 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5Z"/></svg>
+        GitHub
+      </a>
+      <a href="#" class="btn btn-ghost" id="community-btn">Join Community</a>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- VISION -->
+  <section id="vision" class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Vision</span>
+      <h2>Why SAYANJALI BLOCKCHAIN exists</h2>
+      <p>Every product in the SAYANJALI NEXUS ecosystem — AI tools, automation platforms, marketplaces — needs a shared, verifiable, and open economic layer. That's what we're building.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar fade-up">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M3 7l9 5 9-5"/><path d="M12 12v10"/></svg>
+        <h3>Global adoption</h3>
+        <p>Infrastructure designed for developers and businesses everywhere, not a single region or market.</p>
+      </div>
+      <div class="pillar fade-up">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+        <h3>Decentralized infrastructure</h3>
+        <p>A network layer that doesn't depend on any single point of control or failure.</p>
+      </div>
+      <div class="pillar fade-up">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>
+        <h3>Real-world business utility</h3>
+        <p>Built to settle actual usage — subscriptions, API calls, automation jobs — not speculation.</p>
+      </div>
+      <div class="pillar fade-up">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        <h3>Open-source innovation</h3>
+        <p>Every core component is published, auditable, and open for contribution from day one.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- ECOSYSTEM -->
+  <section id="ecosystem" class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Ecosystem</span>
+      <h2>One network, many products</h2>
+      <p>SAYANJALI BLOCKCHAIN is the settlement and identity layer underneath the growing SAYANJALI NEXUS product suite.</p>
+    </div>
+    <div class="eco-grid" id="eco-grid"></div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- FEATURES -->
+  <section class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Foundation</span>
+      <h2>Built for production, not demos</h2>
+      <p>The technical properties that make the network usable for real businesses.</p>
+    </div>
+    <div class="feat-grid" id="feat-grid"></div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- TOKEN -->
+  <section id="token" class="section-pad wrap">
+    <div class="token-panel fade-up">
+      <div>
+        <div class="token-symbol">SYJ</div>
+        <h2>The SYJ utility token</h2>
+        <p class="lede">SYJ is the unit of account for the SAYANJALI NEXUS ecosystem — it exists to be used, not traded for its own sake. It settles usage across every product in the network.</p>
+        <a href="#roadmap" class="btn btn-ghost">View token roadmap</a>
+      </div>
+      <ul class="util-list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> AI subscriptions</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> SaaS licensing</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Marketplace payments</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Governance</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Premium API access</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Education platform access</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Developer services</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Enterprise automation</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Staking (planned)</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Validator rewards (planned)</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- WHY SYJ -->
+  <section class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Why SYJ</span>
+      <h2>Designed around usage, not hype</h2>
+      <p>Utility that shows up in day-to-day business operations.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-item fade-up"><div class="n">Business</div><h3>Business adoption</h3><p>A settlement layer businesses can integrate without rebuilding their stack.</p></div>
+      <div class="why-item fade-up"><div class="n">AI</div><h3>AI integration</h3><p>Native support for metering and paying for AI inference and agents.</p></div>
+      <div class="why-item fade-up"><div class="n">Dev</div><h3>Developer ecosystem</h3><p>SDKs and open documentation so builders can extend the network.</p></div>
+      <div class="why-item fade-up"><div class="n">Ops</div><h3>Enterprise automation</h3><p>Workflow and automation tools that settle usage on-chain.</p></div>
+      <div class="why-item fade-up"><div class="n">Edu</div><h3>Education</h3><p>Access and credentialing for the SAYANJALI education initiatives.</p></div>
+      <div class="why-item fade-up"><div class="n">Infra</div><h3>Infrastructure</h3><p>A shared base layer instead of fragmented, siloed systems.</p></div>
+      <div class="why-item fade-up"><div class="n">X-Plat</div><h3>Cross-platform services</h3><p>One identity and balance across every SAYANJALI NEXUS product.</p></div>
+      <div class="why-item fade-up"><div class="n">Open</div><h3>Open governance</h3><p>Decisions made in the open, with the community able to weigh in.</p></div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- ROADMAP -->
+  <section id="roadmap" class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Roadmap</span>
+      <h2>Where the network stands today</h2>
+      <p>A sequential build, published in the open as each phase ships.</p>
+    </div>
+    <div class="roadmap">
+      <div class="rm-line"></div>
+      <div class="rm-item fade-up">
+        <div class="rm-dot">01</div>
+        <h3>Blockchain MVP <span class="status">— in progress</span></h3>
+        <div class="rm-tags"><span class="rm-tag">GitHub release</span><span class="rm-tag">Open source</span></div>
+      </div>
+      <div class="rm-item fade-up">
+        <div class="rm-dot">02</div>
+        <h3>Website & community <span class="status">— live</span></h3>
+        <div class="rm-tags"><span class="rm-tag">Documentation</span><span class="rm-tag">Community channels</span></div>
+      </div>
+      <div class="rm-item fade-up">
+        <div class="rm-dot">03</div>
+        <h3>Developer SDK <span class="status">— planned</span></h3>
+        <div class="rm-tags"><span class="rm-tag">Explorer</span><span class="rm-tag">Wallet</span></div>
+      </div>
+      <div class="rm-item fade-up">
+        <div class="rm-dot">04</div>
+        <h3>Testnet <span class="status">— planned</span></h3>
+        <div class="rm-tags"><span class="rm-tag">Validator program</span></div>
+      </div>
+      <div class="rm-item fade-up">
+        <div class="rm-dot">05</div>
+        <h3>Mainnet <span class="status">— planned</span></h3>
+        <div class="rm-tags"><span class="rm-tag">SYJ token launch</span></div>
+      </div>
+      <div class="rm-item fade-up">
+        <div class="rm-dot">06</div>
+        <h3>Ecosystem expansion <span class="status">— planned</span></h3>
+        <div class="rm-tags"><span class="rm-tag">New products</span><span class="rm-tag">Partnerships</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- GITHUB -->
+  <section id="github" class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Open Source</span>
+      <h2>Built in the open</h2>
+      <p>Live activity from the SAYANJALI-BLOCKCHAIN repository.</p>
+    </div>
+    <div class="gh-panel fade-up">
+      <div class="gh-top">
+        <div class="gh-repo">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.9 10.95.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.22.7-3.9-1.55-3.9-1.55-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.57-.29-5.28-1.28-5.28-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.72 5.4-5.31 5.68.42.36.79 1.08.79 2.17 0 1.57-.01 2.83-.01 3.22 0 .31.2.67.8.55A11.52 11.52 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5Z"/></svg>
+          <div>
+            <div class="name">SHalimoosavi / SAYANJALI-BLOCKCHAIN</div>
+            <div class="sub">Open source · MIT</div>
+          </div>
+        </div>
+        <a href="https://github.com/SHalimoosavi/SAYANJALI-BLOCKCHAIN" target="_blank" class="btn btn-ghost">View repository</a>
+      </div>
+      <div class="gh-stats" id="gh-stats">
+        <div class="gh-stat"><div class="val mono">—</div><div class="lbl">Stars</div></div>
+        <div class="gh-stat"><div class="val mono">—</div><div class="lbl">Forks</div></div>
+        <div class="gh-stat"><div class="val mono">—</div><div class="lbl">Open issues</div></div>
+        <div class="gh-stat"><div class="val mono">—</div><div class="lbl">Latest release</div></div>
+      </div>
+      <div class="gh-note" id="gh-note">Loading live repository data…</div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- FOUNDER -->
+  <section id="founder" class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Founder</span>
+      <h2>Built by SAYANJALI NEXUS</h2>
+    </div>
+    <div class="founder-panel fade-up">
+      <div class="avatar">SM</div>
+      <div>
+        <h3>Syed Ali Hasan Moosavi</h3>
+        <div class="role">Founder & Managing Director, SAYANJALI NEXUS PRIVATE LIMITED</div>
+        <p class="msg">"We're building technology that solves real problems — AI products, automation, and now the open network that connects them. SAYANJALI BLOCKCHAIN exists so that every product we ship shares one transparent, auditable foundation. It's early, it's open source, and we're building it in public."</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- COMING SOON -->
+  <section class="section-pad wrap">
+    <div class="section-head fade-up">
+      <span class="kicker">Coming soon</span>
+      <h2>What's next for the network</h2>
+    </div>
+    <div class="soon-grid">
+      <div class="soon-item fade-up">Mainnet<span class="tick">planned</span></div>
+      <div class="soon-item fade-up">Whitepaper<span class="tick">planned</span></div>
+      <div class="soon-item fade-up">Developer docs<span class="tick">planned</span></div>
+      <div class="soon-item fade-up">Wallet<span class="tick">planned</span></div>
+      <div class="soon-item fade-up">Explorer<span class="tick">planned</span></div>
+      <div class="soon-item fade-up">Validator program<span class="tick">planned</span></div>
+      <div class="soon-item fade-up">Community<span class="tick">launching</span></div>
+      <div class="soon-item fade-up">SYJ token launch<span class="tick">planned</span></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand"><span class="dot"></span>SAYANJALI BLOCKCHAIN</div>
+        <p>Open-source infrastructure for the SAYANJALI NEXUS ecosystem. Built by SAYANJALI NEXUS PRIVATE LIMITED, Hyderabad, India.</p>
+      </div>
+      <div class="foot-links">
+        <div class="foot-col">
+          <h4>Network</h4>
+          <a href="#ecosystem">Ecosystem</a>
+          <a href="#token">SYJ token</a>
+          <a href="#roadmap">Roadmap</a>
+        </div>
+        <div class="foot-col">
+          <h4>Developers</h4>
+          <a href="https://github.com/SHalimoosavi/SAYANJALI-BLOCKCHAIN" target="_blank">GitHub</a>
+          <a href="#">Documentation</a>
+          <a href="#">SDK</a>
+        </div>
+        <div class="foot-col">
+          <h4>Company</h4>
+          <a href="#founder">Founder</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 SAYANJALI NEXUS PRIVATE LIMITED. All rights reserved.</span>
+      <div class="socials">
+        <a href="https://github.com/SHalimoosavi" target="_blank" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.9 10.95.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.22.7-3.9-1.55-3.9-1.55-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.57-.29-5.28-1.28-5.28-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.72 5.4-5.31 5.68.42.36.79 1.08.79 2.17 0 1.57-.01 2.83-.01 3.22 0 .31.2.67.8.55A11.52 11.52 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5Z"/></svg></a>
+        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.6l-5.2-6.8L5.2 22H2l8.1-9.3L1.5 2H8.3l4.7 6.2L18.9 2Zm-1.2 18h1.7L6.4 4H4.6l13.1 16Z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.75V21h-4v-5.6c0-1.34-.02-3.07-1.9-3.07-1.9 0-2.19 1.44-2.19 2.97V21h-4V9Z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- data ----------
+  const ecosystem = [
+    {name:"SYJ Utility Token", status:"soon", label:"Coming Soon", desc:"The economic and settlement layer for every product in the network.", icon:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 10h8M8 14h8"/>'},
+    {name:"SYJ NexusIntel AI", status:"mvp", label:"MVP", desc:"AI intelligence platform for automation and business insight.", icon:'<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/>'},
+    {name:"SYJ Mail Intelligence AI", status:"mvp", label:"MVP", desc:"AI-powered email triage, drafting, and insight extraction.", icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'},
+    {name:"SYJ Scholar AI", status:"open", label:"Open Source", desc:"Offline-first AI study assistant built for low-connectivity access.", icon:'<path d="M12 3 2 8l10 5 10-5-10-5Z"/><path d="M2 8v6l10 5 10-5V8"/>'},
+    {name:"SAYANJALI OSINT", status:"open", label:"Open Source", desc:"Open intelligence tooling for security and research workflows.", icon:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>'},
+    {name:"SYJ GST Recon", status:"mvp", label:"MVP", desc:"Automated GST reconciliation for Indian businesses.", icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
+    {name:"FarmOwner", status:"soon", label:"Coming Soon", desc:"Digital infrastructure for farm ownership and agricultural operations.", icon:'<path d="M3 21h18M5 21V10l7-7 7 7v11M9 21v-6h6v6"/>'},
+    {name:"Marketplace", status:"soon", label:"Coming Soon", desc:"On-chain marketplace connecting ecosystem products and users.", icon:'<path d="M3 3h18v6H3zM3 9v12h18V9M9 21V13h6v8"/>'},
+    {name:"Wallet", status:"soon", label:"Coming Soon", desc:"Self-custody wallet for holding and using SYJ.", icon:'<rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M17 15h.01"/>'},
+    {name:"Exchange", status:"soon", label:"Coming Soon", desc:"Native venue for trading SYJ against other assets.", icon:'<path d="M7 10V4m0 0L3 8m4-4 4 4M17 14v6m0 0 4-4m-4 4-4-4"/>'},
+    {name:"Launchpad", status:"soon", label:"Coming Soon", desc:"A launch platform for future ecosystem projects.", icon:'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09Z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2Z"/>'},
+    {name:"Identity", status:"soon", label:"Coming Soon", desc:"Portable on-chain identity across the entire ecosystem.", icon:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/>'},
+    {name:"AI Cloud", status:"soon", label:"Coming Soon", desc:"Decentralized compute for running ecosystem AI workloads.", icon:'<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10Z"/>'},
+  ];
+  const badgeClass = {mvp:"badge-mvp", open:"badge-open", soon:"badge-soon"};
+  document.getElementById('eco-grid').innerHTML = ecosystem.map(e => `
+    <div class="eco-card fade-up">
+      <svg class="eco-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${e.icon}</svg>
+      <h3>${e.name}</h3>
+      <p>${e.desc}</p>
+      <span class="badge ${badgeClass[e.status]}">${e.label}</span>
+    </div>
+  `).join('');
+
+  const features = [
+    {t:"Lightning fast", d:"Sub-second transaction confirmation designed for real-time products.", i:'<path d="M13 2 3 14h7l-1 8 11-14h-7l1-6Z"/>'},
+    {t:"Low fees", d:"Predictable, minimal transaction costs at any scale.", i:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.4-2.5 2-2.5 3.5M12 17h.01"/>'},
+    {t:"Secure", d:"Security-first architecture, audited from the ground up.", i:'<path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/>'},
+    {t:"Scalable", d:"Built to grow with ecosystem-wide usage, not just a single app.", i:'<path d="M3 3v18h18M7 15l4-4 3 3 5-6"/>'},
+    {t:"Smart contracts", d:"Programmable logic for automation and enterprise workflows.", i:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/>'},
+    {t:"Open source", d:"Every core component published and auditable on GitHub.", i:'<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 8v8M8 6h4a4 4 0 0 1 4 4"/>'},
+    {t:"Developer friendly", d:"Clear docs, SDKs, and tooling from the first release.", i:'<path d="m8 9-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>'},
+    {t:"Cross-chain ready", d:"Designed with interoperability in mind from day one.", i:'<circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="4"/>'},
+    {t:"Enterprise ready", d:"Reliability and compliance suited for business adoption.", i:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/>'},
+  ];
+  document.getElementById('feat-grid').innerHTML = features.map(f => `
+    <div class="feat">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${f.i}</svg>
+      <h3>${f.t}</h3>
+      <p>${f.d}</p>
+    </div>
+  `).join('');
+
+  // whitepaper / community placeholders (not yet published)
+  document.getElementById('whitepaper-btn').addEventListener('click', e => {
+    e.preventDefault();
+    alert('The whitepaper is in progress and will be published here soon.');
+  });
+  document.getElementById('community-btn').addEventListener('click', e => {
+    e.preventDefault();
+    alert('Community channels are launching soon — check back shortly.');
+  });
+
+  // ---------- scroll reveal ----------
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('in'); });
+  }, {threshold:.15});
+  document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+  // ---------- live GitHub stats ----------
+  (async () => {
+    const owner = "SHalimoosavi", repo = "SAYANJALI-BLOCKCHAIN";
+    const statEls = document.querySelectorAll('#gh-stats .val');
+    const note = document.getElementById('gh-note');
+    try {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+      statEls[0].textContent = data.stargazers_count ?? '0';
+      statEls[1].textContent = data.forks_count ?? '0';
+      statEls[2].textContent = data.open_issues_count ?? '0';
+
+      let latest = 'None yet';
+      try {
+        const relRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
+        if (relRes.ok) {
+          const rel = await relRes.json();
+          latest = rel.tag_name || 'None yet';
+        }
+      } catch (e) {}
+      statEls[3].textContent = latest;
+      note.textContent = `Live data from GitHub · updated ${new Date().toLocaleDateString()}`;
+    } catch (e) {
+      statEls.forEach(el => el.textContent = '—');
+      note.textContent = 'Repository stats will appear here once the GitHub release is public.';
+    }
+  })();
+
+  // ---------- ambient network canvas (signature element) ----------
+  const canvas = document.getElementById('network');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = document.body.scrollHeight;
+  }
+  function initNodes(){
+    const count = Math.floor((W*H)/38000);
+    nodes = Array.from({length: Math.min(count, 90)}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*.15, vy: (Math.random()-.5)*.15,
+      r: Math.random()*1.4+.6, pulse: Math.random()*Math.PI*2
+    }));
+  }
+  resize(); initNodes();
+  window.addEventListener('resize', () => { resize(); initNodes(); });
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for (let i=0;i<nodes.length;i++){
+      const n = nodes[i];
+      if(!reduced){
+        n.x += n.vx; n.y += n.vy; n.pulse += 0.015;
+        if(n.x<0||n.x>W) n.vx*=-1;
+        if(n.y<0||n.y>H) n.vy*=-1;
+      }
+      for (let j=i+1;j<nodes.length;j++){
+        const m = nodes[j];
+        const dx = n.x-m.x, dy = n.y-m.y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if (dist < 160){
+          ctx.strokeStyle = `rgba(139,146,255,${(1-dist/160)*0.12})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(m.x,m.y); ctx.stroke();
+        }
+      }
+      const glow = 0.5 + Math.sin(n.pulse)*0.5;
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(76,111,255,${0.3+glow*0.4})`;
+      ctx.arc(n.x, n.y, n.r + glow*0.8, 0, Math.PI*2);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+</script>
+
+</body>
+</html>
